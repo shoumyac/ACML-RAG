@@ -7,6 +7,9 @@ shift, (2) show naive risk-binned CRC then violates, and (3) introduce a
 LABEL-FREE diagnostic that compares the distribution of an observable noise
 covariate within each certified bin between calibration and deployment; bins
 that drift are decertified (flagged), restoring validity at a coverage cost.
+We apply the identical label-free diagnostic to the benign (bin-measurable)
+deployment as a control, to report how often it flags bins that did not in
+fact need decertifying.
 
 Operates on logged flan_t5_base data; no new generation.
 """
@@ -80,7 +83,8 @@ def split(rep):
     return rr,cal,te
 
 res={"benign_naive":[], "withinshift_naive":[], "withinshift_diagnosed":[]}
-flagged_counts=[]
+flagged_counts=[]           # bins flagged by the diagnostic under the adversarial shift
+flagged_counts_benign=[]    # bins flagged by the SAME diagnostic under the benign shift (control)
 for rep in range(200):
     rr,cal,te=split(rep)
     ck=cal & (~is_noisy | (rr.random(len(cal))<0.30))
@@ -89,6 +93,10 @@ for rep in range(200):
     if ck.sum()<60 or tb.sum()<60: continue
     qs,cert=certify(p_all[ck],y[ck],ALPHA)
     res["benign_naive"].append(realized(p_all[tb],y[tb],qs,cert))
+    # control: apply the identical label-free diagnostic to the benign deployment,
+    # which is bin-measurable and should not need any bin decertified
+    kept_benign=diagnose(qs,cert,p_all[ck],conflict[ck],p_all[tb],conflict[tb])
+    flagged_counts_benign.append(len(cert)-len(kept_benign))
     # adversarial within-bin shift: within deployment, upweight high-conflict items
     # (which carry higher true risk) so bin label-rate rises without moving scores much
     w=np.where(conflict[te]==1, 5.0, 1.0); w=w/ w.sum()
@@ -109,8 +117,10 @@ for k in res:
     if len(a)==0: continue
     out[k]=dict(risk=float(a[:,0].mean()), viol=float((a[:,0]>ALPHA).mean()), cov=float(a[:,1].mean()))
     print(f"{k:26s} {a[:,0].mean():6.3f} {(a[:,0]>ALPHA).mean()*100:6.0f} {a[:,1].mean()*100:8.1f}")
-out["avg_bins_flagged"]=float(np.mean(flagged_counts)) if flagged_counts else 0.0
-print(f"avg certified bins flagged by diagnosis: {out['avg_bins_flagged']:.2f}")
+out["avg_bins_flagged_adversarial"]=float(np.mean(flagged_counts)) if flagged_counts else 0.0
+out["avg_bins_flagged_benign"]=float(np.mean(flagged_counts_benign)) if flagged_counts_benign else 0.0
+print(f"avg certified bins flagged, adversarial: {out['avg_bins_flagged_adversarial']:.2f}")
+print(f"avg certified bins flagged, benign (control): {out['avg_bins_flagged_benign']:.2f}")
 json.dump(out, open(f"{DATA}/selfdiag_{TAG}.json","w"), indent=1)
 
 # figure

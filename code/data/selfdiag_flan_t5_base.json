@@ -1,0 +1,19 @@
+{
+ "benign_naive": {
+  "risk": 0.06628518426171529,
+  "viol": 0.0,
+  "cov": 0.2988271955808162
+ },
+ "withinshift_naive": {
+  "risk": 0.06197390645951481,
+  "viol": 0.04,
+  "cov": 0.39014871375285687
+ },
+ "withinshift_diagnosed": {
+  "risk": 0.005764144752337573,
+  "viol": 0.01,
+  "cov": 0.011789823410686857
+ },
+ "avg_bins_flagged_adversarial": 4.37,
+ "avg_bins_flagged_benign": 0.24
+}

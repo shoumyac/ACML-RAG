@@ -1,0 +1,17 @@
+{
+ "n_rows": 720,
+ "n_answered": 711,
+ "n_mismatches": 60,
+ "sep_regression": {
+  "auroc": 0.6557672079416211,
+  "ci_lo": 0.6026190517162826,
+  "ci_hi": 0.7047153042081846
+ },
+ "sep_classifier": {
+  "auroc": 0.7583656564328446,
+  "ci_lo": 0.7081897129220749,
+  "ci_hi": 0.8047109305132322
+ },
+ "hidden_dim": 512,
+ "note": "hidden = final-layer decoder hidden state at the generation step that produced the last content token of the greedy answer (flan-t5-small, encoder-decoder; the original SEP paper ablates decoder-only models, so this is one clearly-defined choice rather than a reproduction of their full layer/position sweep). sep_regression targets the cached SE value from the original 6-condition run; sep_classifier and the AUROC ground truth both use this run's own greedy label. CAVEAT: sep_regression and sep_classifier are compared here under a same-distribution GroupKFold-by-qid split, not the cross-task/cross-dataset distribution shift that the original paper's generalisation claim (SE-regression generalises better than a probe trained directly on the label) concerns; this comparison neither confirms nor refutes that claim."
+}

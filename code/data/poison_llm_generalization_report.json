@@ -1,0 +1,13 @@
+{
+ "original_ours_retrieval_auroc": 0.892557686868855,
+ "poison_llm_halluc_rate": 0.9831932773109243,
+ "poison_llm_mean_risk_score": 0.9767500545881885,
+ "poison_llm_n_answered": 119,
+ "certification_mixed_deployment": {
+  "realized_risk": 0.006589809825103944,
+  "violation_pct": 4.0,
+  "answer_rate_pct": 0.34412834094812966
+ },
+ "poison_llm_alone_accept_rate_pct": 0.0,
+ "note": "CORRECTED 2026-09-06: excludes qid=cap1 (generator declined and wrote the true answer instead of a false one; see main.tex and generate_poison_panel_docs.py for the full account). 117/119 = 98.3% hallucination, not the originally reported 117/120 = 97.5%. poison_llm condition and its risk scores were never used to fit the GBM or the certification bins; this is genuine out-of-distribution generalisation, not cross-validation on data the estimator was trained on."
+}

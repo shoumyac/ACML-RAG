@@ -1,0 +1,55 @@
+{
+ "auc": {
+  "semantic_entropy": 0.674778319386448,
+  "one_minus_ptrue": 0.7095942371358699,
+  "traq_style_ret_top1": 0.717704503485335,
+  "traq_style_ret_min": 0.6842985243474354,
+  "traq_style_ret_margin": 0.5463033821890232,
+  "ours_retrieval": 0.892557686868855
+ },
+ "SE-threshold (marginal)": {
+  "risk": 0.02076052578396247,
+  "viol": 0.03333333333333333,
+  "cov": 0.016714334296897726
+ },
+ "P(True)-threshold (marginal)": {
+  "risk": 0.20716286857487048,
+  "viol": 0.38666666666666666,
+  "cov": 0.01965604759452649
+ },
+ "ours risk-binned": {
+  "risk": 0.026061925323561053,
+  "viol": 0.12,
+  "cov": 0.014562326765788102
+ },
+ "TRAQ-threshold (marginal)": {
+  "risk": 0.019891884360849876,
+  "viol": 0.03333333333333333,
+  "cov": 0.0020839428740801456
+ },
+ "Conformal-RAG group-conditional (by cond)": {
+  "risk": 0.09633975092876426,
+  "viol": 0.47333333333333333,
+  "cov": 0.14767491777234634
+ },
+ "breakdown_confrag_noisy": {
+  "risk": 1.0,
+  "viol": 1.0,
+  "cov": 0.022598870056497175
+ },
+ "breakdown_confrag_clean": {
+  "risk": 0.0958251541944743,
+  "viol": 0.4666666666666667,
+  "cov": 0.44310877263280624
+ },
+ "breakdown_ours_noisy": {
+  "risk": 0.9895104895104895,
+  "viol": 1.0,
+  "cov": 0.008261246255109354
+ },
+ "breakdown_ours_clean": {
+  "risk": 0.05038417324811859,
+  "viol": 0.13157894736842105,
+  "cov": 0.1617136580210681
+ }
+}

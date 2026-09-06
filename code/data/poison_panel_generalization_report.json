@@ -1,0 +1,76 @@
+{
+ "original_ours_retrieval_auroc": 0.892557686868855,
+ "per_style": {
+  "poison_llm": {
+   "n": 119,
+   "halluc_rate": 0.9831932773109243,
+   "mean_risk_score": 0.9767500545881885,
+   "min_risk_score": 0.15748872154848656,
+   "max_risk_score": 0.997384581175541,
+   "auroc": 0.9423076923076923
+  },
+  "authority": {
+   "n": 120,
+   "halluc_rate": 0.9916666666666667,
+   "mean_risk_score": 0.9777704198999274,
+   "min_risk_score": 0.15748872154848656,
+   "max_risk_score": 0.997384581175541,
+   "auroc": 0.8907563025210085
+  },
+  "negation": {
+   "n": 120,
+   "halluc_rate": 0.3333333333333333,
+   "mean_risk_score": 0.9612133464148551,
+   "min_risk_score": 0.22672607211663584,
+   "max_risk_score": 0.997384581175541,
+   "auroc": 0.46328125
+  },
+  "corrob": {
+   "n": 120,
+   "halluc_rate": 0.95,
+   "mean_risk_score": 0.18039347551207827,
+   "min_risk_score": 0.015519976316244435,
+   "max_risk_score": 0.9773169126381112,
+   "auroc": 0.33187134502923976
+  }
+ },
+ "per_style_certification": {
+  "poison_llm": {
+   "realized_risk": 0.006589809825103944,
+   "violation_pct": 4.0,
+   "answer_rate_pct": 0.34412834094812966,
+   "new_alone_accept_rate_pct": 0.0,
+   "new_alone_realized_risk_when_any_accepted": null
+  },
+  "authority": {
+   "realized_risk": 0.006589809825103944,
+   "violation_pct": 4.0,
+   "answer_rate_pct": 0.343404813169766,
+   "new_alone_accept_rate_pct": 0.0,
+   "new_alone_realized_risk_when_any_accepted": null
+  },
+  "negation": {
+   "realized_risk": 0.006589809825103944,
+   "violation_pct": 4.0,
+   "answer_rate_pct": 0.343404813169766,
+   "new_alone_accept_rate_pct": 0.0,
+   "new_alone_realized_risk_when_any_accepted": null
+  },
+  "corrob": {
+   "realized_risk": 0.021777581254056138,
+   "violation_pct": 4.0,
+   "answer_rate_pct": 0.6629585130813109,
+   "new_alone_accept_rate_pct": 1.2666666666666666,
+   "new_alone_realized_risk_when_any_accepted": 0.9473684210526315
+  }
+ },
+ "combined_all_four_styles": {
+  "n_total": 479,
+  "realized_risk": 0.021777581254056138,
+  "violation_pct": 4.0,
+  "answer_rate_pct": 0.3778043789276858,
+  "new_alone_accept_rate_pct": 0.3173277661795407,
+  "new_alone_realized_risk_when_any_accepted": 0.9473684210526315
+ },
+ "note": "Four independently-authored LLM poisoning styles (poison_llm: t10's single naturally-phrased false-fact passage; authority: attributes the fake value to a fictional authoritative source; negation: states the true value then denies it, asserting the fake value as a correction; corrob: two independently-generated passages asserting the same fake value), none ever seen by the estimator or bins during training/calibration, pooled into one deployment-mix certification test. poison_llm excludes qid=cap1 (see poison_llm_generalization_report.json note)."
+}

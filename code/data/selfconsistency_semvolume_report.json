@@ -1,0 +1,27 @@
+{
+ "auc": {
+  "semantic_entropy": 0.6522828873841299,
+  "one_minus_ptrue": 0.6920320820458878,
+  "self_consistency_inv": 0.6481493655906909,
+  "semantic_volume": 0.6654435934521069,
+  "ours_retrieval": 0.905393300900664
+ },
+ "halluc_rate": 0.5963431786216596,
+ "n_answered": 711,
+ "n_total": 720,
+ "bootstrap_ours_minus_selfconsistency": {
+  "mean": 0.2575539254624697,
+  "ci95": [
+   0.22517072979360628,
+   0.2914392758518139
+  ]
+ },
+ "bootstrap_ours_minus_semanticvolume": {
+  "mean": 0.24066970111303818,
+  "ci95": [
+   0.2000072645811626,
+   0.28062510217437125
+  ]
+ },
+ "note": "Computed on a fresh rerun of run_semantic_entropy.py's pipeline that additionally persists the 5 sampled generations; not a join onto the older cached results_se_flan_t5_small.json (see module docstring for why)."
+}
