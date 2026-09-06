@@ -10,3 +10,7 @@ __pycache__/
 
 # editing backups and scratch
 *.bak-*
+
+# manuscript source/PDF: authoritative copy lives with the journal, not here
+paper/
+paper_sn-jnl/

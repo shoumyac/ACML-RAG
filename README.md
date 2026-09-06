@@ -12,14 +12,11 @@ with every result file and the figure-generation code.
 
 **Repository:** https://github.com/shoumyac/ACML-RAG
 
+This repository holds code and data only. The manuscript itself is submitted separately to the journal; see the citation below once it is published.
+
 ## Repository structure
 
 ```
-paper/                Manuscript source and compiled PDF
-  ncsrag_journal.tex  LaTeX source
-  refs.bib            Bibliography
-  ncsrag_journal.pdf  Compiled paper
-  figures/            All figures
 code/                 Experiment, analysis, and figure code
   build_world_v2.py         Build the controlled two-regime fact world
   build_world_domain2.py    Second independent domain (companies/elements)
