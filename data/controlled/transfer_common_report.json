@@ -1,0 +1,82 @@
+{
+  "flan_t5_small->flan_t5_base": {
+    "auc": 0.8156790328524933,
+    "risk": 0.16940707523667164,
+    "coverage": 0.6349256564378362,
+    "threshold": 0.5671941091385295,
+    "n_src_answered": 1792,
+    "n_tgt_answered": 3161
+  },
+  "flan_t5_base->flan_t5_small": {
+    "auc": 0.9195957543975685,
+    "risk": 0.2273972602739726,
+    "coverage": 0.40736607142857145,
+    "threshold": 0.4677225735064595,
+    "n_src_answered": 3161,
+    "n_tgt_answered": 1792
+  },
+  "flan_t5_base->qwen2_5_7b_instruct": {
+    "auc": 0.7705279587122553,
+    "risk": 0.2134703196347032,
+    "coverage": 0.7355163727959698,
+    "threshold": 0.4677225735064595,
+    "n_src_answered": 3161,
+    "n_tgt_answered": 2382
+  },
+  "qwen2_5_7b_instruct->flan_t5_base": {
+    "auc": 0.6110700894718719,
+    "risk": 0.3177948925820835,
+    "coverage": 0.78044922492882,
+    "threshold": 0.563731038544586,
+    "n_src_answered": 2382,
+    "n_tgt_answered": 3161
+  },
+  "qwen2_5_1_5b_instruct->qwen2_5_14b_instruct": {
+    "auc": 0.7365582473444727,
+    "risk": 0.2847645429362881,
+    "coverage": 0.7412731006160165,
+    "threshold": 0.4787359487465315,
+    "n_src_answered": 2732,
+    "n_tgt_answered": 2435
+  },
+  "qwen2_5_14b_instruct->qwen2_5_1_5b_instruct": {
+    "auc": 0.7690147522748408,
+    "risk": 0.20583554376657826,
+    "coverage": 0.6899707174231332,
+    "threshold": 0.5612910775489504,
+    "n_src_answered": 2435,
+    "n_tgt_answered": 2732
+  },
+  "mistral_7b_instruct_v0_3->qwen2_5_7b_instruct": {
+    "auc": 0.6769583584791793,
+    "risk": 0.2764997744700045,
+    "coverage": 0.9307304785894207,
+    "threshold": 0.6889323789170804,
+    "n_src_answered": 2395,
+    "n_tgt_answered": 2382
+  },
+  "qwen2_5_7b_instruct->mistral_7b_instruct_v0_3": {
+    "auc": 0.8224063121974472,
+    "risk": 0.1400933955970647,
+    "coverage": 0.6258872651356994,
+    "threshold": 0.563731038544586,
+    "n_src_answered": 2382,
+    "n_tgt_answered": 2395
+  },
+  "gemma_2_9b_it->qwen2_5_14b_instruct": {
+    "auc": 0.7432828791909711,
+    "risk": 0.2345679012345679,
+    "coverage": 0.5987679671457905,
+    "threshold": 0.5543892789305518,
+    "n_src_answered": 2707,
+    "n_tgt_answered": 2435
+  },
+  "qwen2_5_14b_instruct->gemma_2_9b_it": {
+    "auc": 0.7827907060689115,
+    "risk": 0.2711645896003438,
+    "coverage": 0.8596231991134097,
+    "threshold": 0.5612910775489504,
+    "n_src_answered": 2435,
+    "n_tgt_answered": 2707
+  }
+}
