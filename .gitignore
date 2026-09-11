@@ -14,3 +14,6 @@ __pycache__/
 # manuscript source/PDF: authoritative copy lives with the journal, not here
 paper/
 paper_sn-jnl/
+
+# submission zip: authoritative copy lives with the journal, not here
+ncsrag_springer_submission.zip
