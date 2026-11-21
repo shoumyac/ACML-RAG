@@ -1,92 +1,120 @@
 # Knowing When Not to Answer
 
-Code, data, and analysis for the paper **"Knowing When Not to Answer: Noise-Conditional
-Hallucination Risk Estimation and Shift-Robust Selective Generation for Retrieval-Augmented
-Language Models"** (Anmita Das, Shoumya Chowdhury, Sushanta Paul).
+**Noise-conditional hallucination risk estimation and shift-robust selective generation for retrieval-augmented language models.**
 
-We study selective generation for retrieval-augmented generation (RAG) under
-retrieval-noise distribution shift. The repository releases the full controlled
-two-regime testbed, the naturalistic SQuAD validation, the noise-conditional risk
-estimator, and the **risk-binned Mondrian conformal risk control** procedure, together
-with every result file and the figure-generation code.
+[![tests](https://github.com/shoumyac/ACML-RAG/actions/workflows/ci.yml/badge.svg)](https://github.com/shoumyac/ACML-RAG/actions/workflows/ci.yml)
+![python](https://img.shields.io/badge/python-3.9%2B-blue)
+![license](https://img.shields.io/badge/license-MIT-green)
 
-**Repository:** https://github.com/shoumyac/ACML-RAG
+Accepted to the **ACML 2026 journal track** (*Machine Learning*, Springer).
+Anmita Das, Shoumya Chowdhury, Sushanta Paul.
 
-This repository holds code and data only. The manuscript itself is submitted separately to the journal; see the citation below once it is published.
+---
 
-## Repository structure
+## The problem
 
-```
-code/                 Experiment, analysis, and figure code
-  build_world_v2.py         Build the controlled two-regime fact world
-  build_world_domain2.py    Second independent domain (companies/elements)
-  run_experiment_v2.py      Generation across the typed-noise grid
-  run_semantic_entropy.py   Semantic-entropy baseline
-  run_llm_judge.py          LLM-judge relabeling
-  stage1_cache.py           Cache out-of-fold risk-estimator predictions
-  stage2_report.py          Conformal-under-shift + baseline report (controlled)
-  naturalistic_report.py    Naturalistic per-condition + conformal report
-  nat_noise_report.py       Natural-noise (no injection) analysis
-  make_figures.py           Regenerate all paper figures
-  analyze_*.py              Additional diagnostics and sensitivity sweeps
-  colab/                    Colab Pro+ notebooks (large models, naturalistic, judge)
-data/
-  controlled/         Controlled-grid generations (8 generators, 80M to 9B)
-  naturalistic/       SQuAD real-retrieval (BM25/dense) and natural-noise generations
-  judged/             LLM-judge-relabeled files + human_annotation_sheet.csv
-  reports/            Per-model JSON reports (AUROC, SE gap, conformal)
-docs/                 Result summaries (multi-family, naturalistic, decomposition)
-```
+A retrieval-augmented system should answer only when its risk of hallucinating is under control. But retrieval is itself a source of noise (irrelevant, contradictory or misleading passages), and the noise you see when you calibrate is not the noise you meet in deployment. Standard conformal risk control assumes the two match, so its guarantee **silently breaks** exactly when it matters.
 
-Files ending in `_partial.json` are resumable checkpoints and can be ignored.
+## What this repository contributes
 
-## Data schema
+1. **A noise-conditional risk estimator.** Observable retrieval descriptors, model-internal signals and a closed-book contrast are combined into one hallucination-risk score. It predicts hallucination far better than model-internal uncertainty alone.
+2. **Risk-binned Mondrian conformal risk control.** Calibration scores are split into bins and each bin is certified with a Clopper-Pearson upper bound. The system answers only inside certified bins. The guarantee holds under any deployment shift that reweights bins (bin-measurable shift), and a label-free monitor checks the one assumption that can fail.
+3. **A controlled testbed and a full reproduction package.** A two-regime synthetic and real fact world with typed noise, a naturalistic SQuAD validation, nine generators from 80M to 14B parameters, and every result file.
 
-Each `results_*.json` is a list of generation records with fields:
-`qid, regime, cond, question, gold, answer, label` (correct / hallucination / abstain),
-retrieval descriptors (`ret_mean, ret_top1, ret_margin, ret_min, ret_std, has_ctx`),
-model-internal features (`lp_mean, lp_min, ent_mean, ent_max, ent_first, ans_len`),
-and `se` (discrete semantic entropy). `judged_*.json` additionally carry `label_em`
-(exact-match label) alongside the judge `label`.
+<p align="center"><img src="assets/pipeline.png" width="80%" alt="Pipeline from retrieval signals to a certified answer decision"></p>
 
-## Reproducing the analysis
+## Headline result
+
+Target risk 0.10, calibrate on clean-heavy data, deploy on noise-heavy data (flan-t5-base, 200 resplits).
+
+| Method | Realized risk | Violation rate | Answer rate |
+|---|---:|---:|---:|
+| Marginal CRC | 0.215 | 100% | 70.5% |
+| Density-ratio weighted CRC | 0.176 | 100% | 61.5% |
+| Worst-group CRC | 0.035 | 22% | 12.7% |
+| **Risk-binned Mondrian CRC (ours)** | **0.063** | **0%** | **29.2%** |
+
+Standard methods and their covariate-shift remedies miss the 10% target in every resplit. Risk-binned certification never does, and it answers 2.3 times more queries than the worst-group bound that is the only other method close to valid.
+
+<p align="center">
+<img src="assets/auroc.png" width="48%" alt="AUROC of the risk estimator">
+<img src="assets/crc_under_shift.png" width="48%" alt="Realized risk under noise shift">
+</p>
+
+Other findings (full tables in [`docs/RESULTS.md`](docs/RESULTS.md)):
+
+- The combined estimator reaches AUROC 0.915 against 0.788 for model-internal signals (+0.127, 95% CI 0.115 to 0.140), and beats sampling-based semantic entropy by 0.31 to 0.40 AUROC across seven instruction-tuned generators.
+- Discrimination transfers across generators (AUROC 0.61 to 0.92) but calibration does not (1.4 to 3.2 times the target risk), so calibrate locally.
+- Three regularities of noisy RAG: one unopposed false document is absorbed 85 to 100% of the time; a contradiction at the first context position is more than twice as damaging as at the last; under conflicting evidence, 100% of errors are confident assertions.
+
+## Quickstart
 
 ```bash
-pip install -r requirements.txt
-# controlled six-family panel
-for t in qwen2_5_1_5b_instruct qwen2_5_3b_instruct phi_3_5_mini_instruct \
-         mistral_7b_instruct_v0_3 qwen2_5_7b_instruct gemma_2_9b_it; do
-  python code/stage1_cache.py $t && python code/stage2_report.py $t
-done
-# naturalistic
-for t in squad_bm25_qwen2_5_7b_instruct squad_dense_qwen2_5_7b_instruct \
-         squad_bm25_mistral_7b_instruct_v0_3 squad_dense_mistral_7b_instruct_v0_3; do
-  python code/stage1_cache.py $t && python code/naturalistic_report.py $t
-done
-python code/nat_noise_report.py     # natural-noise
-python code/make_figures.py         # regenerate figures
+git clone https://github.com/shoumyac/ACML-RAG.git
+cd ACML-RAG
+pip install -e ".[dev]"
+python examples/reproduce_headline.py     # about 15 seconds on a laptop
+pytest                                    # unit tests plus the headline integration test
 ```
-(Place the data files where the scripts expect them, or adjust the `DATA` path at the
-top of each script.)
 
-## Regenerating data
+Use the method on your own scores:
 
-The large-model generations were produced on Colab Pro+ (A100) using the notebooks in
-`code/colab/`. See each notebook header for instructions.
+```python
+import numpy as np
+from ncsrag import RiskBinnedCRC
 
-## License
+# scores: estimated hallucination risk in [0, 1] (lower is safer)
+# labels: 1 = hallucination, 0 = correct answer, on a held-out calibration set
+crc = RiskBinnedCRC(alpha=0.10, n_bins=10).fit(cal_scores, cal_labels)
+print(crc.summary())                       # per-bin counts, Clopper-Pearson bounds, certified or not
 
-Code released under the MIT License (see LICENSE). Data are derived from publicly
-available, openly licensed models and the SQuAD dataset.
+answer = crc.answer_mask(new_scores)       # True = answer, False = abstain
+risk, answer_rate = crc.evaluate(test_scores, test_labels)
+```
+
+With probability at least `1 - n_bins * delta` over the calibration draw, the hallucination rate among answered queries is at most `alpha` for every deployment distribution that only reweights score bins.
+
+## Repository map
+
+```
+src/ncsrag/           Reusable library (the method)
+  conformal.py          RiskBinnedCRC, marginal CRC, Clopper-Pearson bound, deployment monitor
+  estimator.py          Noise-conditional risk estimator (grouped cross-validation)
+  protocol.py           The paper's noise-shift evaluation protocol
+tests/                Unit tests and an integration test on the shipped data
+examples/             reproduce_headline.py
+docs/                 METHOD.md, RESULTS.md, REPRODUCING.md, DATA_CARD.md
+assets/               Figures used in this README
+code/                 Frozen experiment and analysis scripts exactly as used for the paper
+  colab/                Notebooks for the large-model, naturalistic and judge runs
+data/                 Every generation and report file behind the paper's tables
+  controlled/           Typed-noise grid, 9 generators from 80M to 14B parameters
+  naturalistic/         SQuAD with real BM25 and dense retrieval, natural-noise runs
+  judged/               LLM-judge relabeled files and the human annotation sheet
+  reports/              Per-model JSON reports (AUROC, semantic-entropy gap, conformal)
+```
+
+`src/ncsrag` is the clean, tested implementation to build on. `code/` is the research record: it regenerates the paper's tables and figures and is left unchanged so results stay traceable. See [`docs/REPRODUCING.md`](docs/REPRODUCING.md).
+
+## Limitations
+
+Exact-match labels undercount paraphrase hallucination; one poisoning recipe is tested and no adaptive attacker; the method is blind to independently worded, mutually corroborating false passages; generators go up to 14B parameters. The guarantee needs bin-measurable shift, and the deployment monitor is the check for the within-bin case.
 
 ## Citation
 
 ```bibtex
 @article{das2026knowing,
-  title={Knowing When Not to Answer: Noise-Conditional Hallucination Risk Estimation
-         and Shift-Robust Selective Generation for Retrieval-Augmented Language Models},
-  author={Das, Anmita and Chowdhury, Shoumya and Paul, Sushanta},
-  year={2026},
-  note={Code and data: \url{https://github.com/shoumyac/ACML-RAG}}
+  title   = {Knowing When Not to Answer: Noise-Conditional Hallucination Risk Estimation
+             and Shift-Robust Selective Generation for Retrieval-Augmented Language Models},
+  author  = {Das, Anmita and Chowdhury, Shoumya and Paul, Sushanta},
+  journal = {Machine Learning (Springer), ACML 2026 Journal Track},
+  year    = {2026},
+  note    = {Code and data: \url{https://github.com/shoumyac/ACML-RAG}}
 }
 ```
+
+GitHub also reads [`CITATION.cff`](CITATION.cff) for the "Cite this repository" button.
+
+## License
+
+MIT for the code (see [`LICENSE`](LICENSE)). The data are generations from openly licensed models plus the public SQuAD dataset.

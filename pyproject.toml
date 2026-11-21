@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ncsrag"
+version = "1.0.0"
+description = "Noise-conditional selective generation for retrieval-augmented language models: hallucination-risk estimation and risk-binned Mondrian conformal risk control."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+authors = [{ name = "Anmita Das" }, { name = "Shoumya Chowdhury" }, { name = "Sushanta Paul" }]
+dependencies = ["numpy", "scipy", "scikit-learn"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+experiments = ["matplotlib", "torch", "transformers", "accelerate", "datasets", "sentence-transformers", "faiss-cpu", "rank_bm25"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: integration test on the shipped data (about a minute)"]
