@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite the paper."
+title: "Knowing When Not to Answer: Noise-Conditional Hallucination Risk Estimation and Shift-Robust Selective Generation for Retrieval-Augmented Language Models"
+type: software
+authors:
+  - family-names: Das
+    given-names: Anmita
+  - family-names: Chowdhury
+    given-names: Shoumya
+    orcid: "https://orcid.org/0009-0005-5552-1094"
+  - family-names: Paul
+    given-names: Sushanta
+repository-code: "https://github.com/shoumyac/ACML-RAG"
+license: MIT
+version: 1.0.0
+date-released: "2026-11-21"
+keywords:
+  - retrieval-augmented generation
+  - hallucination
+  - conformal risk control
+  - selective generation
+  - distribution shift

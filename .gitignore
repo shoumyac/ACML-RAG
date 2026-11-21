@@ -17,3 +17,14 @@ paper_sn-jnl/
 
 # submission zip: authoritative copy lives with the journal, not here
 ncsrag_springer_submission.zip
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+# LaTeX build files
+# resumable checkpoints and cached predictions
+cache_*.npz
+# manuscript, submission and reviewer correspondence live with the journal, not here
+cover_letter*
+response_to_reviewers*
+point_by_point_response*
